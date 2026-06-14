@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIプロンプト集</title>
+    <style>
+        :root {
+            --bg-color: #f5f7fa;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --primary-color: #3182ce;
+            --primary-hover: #2b6cb0;
+            --btn-bg: #edf2f7;
+            --btn-text: #4a5568;
+            --btn-hover: #e2e8f0;
+            --btn-active-bg: #3182ce;
+            --btn-active-text: #ffffff;
+            --danger-color: #e53e3e;
+            --danger-bg: #fff5f5;
+            --important-color: #d69e2e;
+            --important-bg: #fffff0;
+            --tag-bg: #e2e8f0;
+            --tag-text: #4a5568;
+            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --border-radius: 8px;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #1a202c;
+                --text-color: #e2e8f0;
+                --card-bg: #2d3748;
+                --card-border: #4a5568;
+                --primary-color: #63b3ed;
+                --primary-hover: #4299e1;
+                --btn-bg: #4a5568;
+                --btn-text: #e2e8f0;
+                --btn-hover: #2d3748;
+                --btn-active-bg: #63b3ed;
+                --btn-active-text: #1a202c;
+                --danger-color: #fc8181;
+                --danger-bg: rgba(229,62,62,0.15);
+                --important-color: #f6e05e;
+                --important-bg: rgba(214,158,46,0.15);
+                --tag-bg: #4a5568;
+                --tag-text: #e2e8f0;
+            }
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+                         "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 16px;
+        }
+        .container { max-width: 1800px; margin: 0 auto; }
+
+        .header { margin-bottom: 24px; }
+        .header h1 { font-size: 1.8rem; margin-bottom: 8px; }
+        .header p { font-size: 1rem; opacity: 0.8; }
+
+        .controls {
+            background-color: var(--card-bg);
+            padding: 16px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            border: 1px solid var(--card-border);
+        }
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin-bottom: 16px;
+            outline: none;
+        }
+        .search-box:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 1px var(--primary-color);
+        }
+        .filter-group { margin-bottom: 16px; }
+        .filter-group-title { font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; opacity: 0.8; }
+        .filter-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+        .filter-btn {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover { background-color: var(--btn-hover); }
+        .filter-btn.active { background-color: var(--btn-active-bg); color: var(--btn-active-text); }
+
+        .meta-controls {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-top: 1px solid var(--card-border);
+            padding-top: 16px;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+        .meta-controls-right { display: flex; gap: 8px; flex-wrap: wrap; }
+        .reset-btn {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+            padding: 6px 12px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .reset-btn:hover { background-color: var(--btn-hover); }
+        .expand-all-btn {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 6px 12px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .expand-all-btn:hover { background-color: var(--btn-bg); }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        @media (min-width: 768px) {
+            .grid { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s;
+        }
+        .card:hover { box-shadow: var(--shadow-md); }
+        .card.most-important {
+            border-left: 5px solid var(--important-color);
+            background-color: var(--important-bg);
+        }
+        .card.high-risk { border-left: 5px solid var(--danger-color); }
+        .card.most-important.high-risk { border-left: 5px solid var(--important-color); }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .card-title { font-size: 1.2rem; font-weight: bold; margin-right: 8px; line-height: 1.4; }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .badge.importance-最重要 { background-color: var(--important-color); color: #1a202c; }
+        .badge.importance-高 { background-color: var(--tag-bg); color: var(--tag-text); }
+
+        .card-meta { margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .meta-tag {
+            background-color: #b2f5ea;
+            color: #234e52;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+        .meta-category {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+
+        .card-field { font-size: 0.9rem; margin-bottom: 8px; }
+        .card-field strong { opacity: 0.8; }
+        .caution-text {
+            color: var(--danger-color);
+            font-weight: bold;
+            background-color: var(--danger-bg);
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+        }
+
+        .prompt-wrapper {
+            position: relative;
+            margin-top: 8px;
+            margin-bottom: 16px;
+            flex-grow: 1;
+        }
+        .prompt-text {
+            background-color: var(--bg-color);
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid var(--card-border);
+            max-height: 200px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .prompt-wrapper.expanded .prompt-text { max-height: 3000px; }
+        .prompt-fade {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 50px;
+            background: linear-gradient(to bottom, transparent, var(--card-bg));
+            pointer-events: none;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        .prompt-wrapper.expanded .prompt-fade { display: none; }
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 8px 0;
+            font-weight: bold;
+            display: none;
+            text-align: center;
+            width: 100%;
+        }
+        .toggle-btn:hover { text-decoration: underline; }
+
+        .copy-btn {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .copy-btn:hover { background-color: var(--primary-hover); }
+        .copy-btn.copied { background-color: #38a169; }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: #333333;
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+        @media (prefers-color-scheme: dark) {
+            .toast { background-color: #e2e8f0; color: #1a202c; }
+            .meta-tag { background-color: #234e52; color: #b2f5ea; }
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        .footer-notes {
+            background-color: var(--card-bg);
+            border: 1px solid var(--danger-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .footer-notes h3 { color: var(--danger-color); margin-bottom: 12px; font-size: 1.1rem; }
+        .footer-notes ul { list-style-type: disc; padding-left: 20px; font-size: 0.9rem; }
+        .footer-notes li { margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>AIプロンプト集</h1>
+        <p>カテゴリや検索から選び、コピーしてAIに貼り付けて使うプロンプト集です。</p>
+    </div>
+
+    <div class="controls">
+        <input type="text" id="search-input" class="search-box" placeholder="タイトル、カテゴリ、用途、タグ、本文から検索...">
+
+        <div class="filter-group">
+            <div class="filter-group-title">カテゴリ</div>
+            <div class="filter-buttons" id="category-filters"></div>
+        </div>
+
+        <div class="filter-group">
+            <div class="filter-group-title">タグ（複数選択可）</div>
+            <div class="filter-buttons" id="tag-filters"></div>
+        </div>
+
+        <div class="meta-controls">
+            <div class="meta-controls-right">
+                <button class="reset-btn" onclick="resetFilters()">検索条件リセット</button>
+                <button class="expand-all-btn" onclick="toggleExpandAll()">全て展開</button>
+            </div>
+            <div>
+                全 <strong id="total-count">0</strong> 件中
+                <strong id="item-count">0</strong> 件表示
+                <span style="margin-left: 10px; opacity: 0.7; font-size: 0.8rem;">
+                    最終更新日: <span id="last-updated"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid" id="prompt-grid"></div>
+
+    <div class="footer-notes">
+        <h3>セキュリティ・運用上の注意</h3>
+        <ul>
+            <li>このHTMLには、顧問先名、個人情報、医療検査結果、家族の具体情報、資産情報、ID、パスワード、APIキーを入れないこと。</li>
+            <li>GitHub Pagesで公開する場合は、誰でも閲覧できる前提で内容を作ること。</li>
+            <li>税務・医療・法律に関する回答は、必ず一次情報・専門家確認・主治医確認を前提にすること。</li>
+            <li>AIへの入力時も、不要な個人情報・機密情報は削ること。</li>
+            <li>顧問先メールや個人的メッセージの実例は、具体名を削除してから入力すること。</li>
+        </ul>
+    </div>
+</div>
+
+<div class="toast" id="toast-message">コピーしました</div>
+
+<script>
+// ============================================================
+// ▼▼▼ プロンプトデータ（ここを編集してください）▼▼▼
+// ------------------------------------------------------------
+// 各項目の説明:
+//   id        : 一意のID（変更不要）
+//   title     : カードに表示するタイトル
+//   category  : カテゴリ（下の categories 配列と一致させること）
+//   tags      : タグの配列（下の tagsList 配列と一致させること）
+//   importance: "最重要" または "高"
+//   purpose   : 用途の説明（1行）
+//   caution   : 注意点（1行）
+//   prompt    : コピーされるプロンプト本文（バッククォート ` で囲む）
+// ============================================================
+
+const promptData = [
+    // ----------------------------------------
+    // HTML図解（Gemini）: Geminiで新規作成する場合
+    // ----------------------------------------
+    {
+        id: "1-1",
+        title: "HTML/CSS図解作成【ＰＣ版】",
+        category: "HTML図解（Gemini）",
+        tags: ["HTML", "図解", "高頻度"],
+        importance: "最重要",
+        purpose: "原文を網羅的・正確にHTML/CSS図解へ変換する",
+        caution: "React・外部ライブラリは使わない。header要素・footer要素を使わない。",
+        prompt:
+`# 役割
+あなたは、情報設計・HTML/CSS・SVG図解に精通した最高水準のフロントエンドエンジニアです。
+
+# 目的
+私が提示する「原文」を、網羅性・完全性・正確性・視認性を最優先した、分かりやすいHTML/CSS図解として作成してください。
+
+# 前提・背景
+網羅性と完全性を最も重視してください。
+長文の出力は許容します。
+正確性を重視してください。
+図解化にあたり、必要な調査・検討・再検証を行ってください。
+参照元が指定されている場合は、その参照元を最優先してください。
+
+# 品質基準
+品質を最優先してください。
+時間制約は考慮しないでください。
+原文の情報を削らず、構造化して図解してください。
+不明点や複数解釈が成立する箇所を推測で補完しないでください。
+図解として視認性が高くなるよう、レイアウト・配色・余白・タイポグラフィ・注釈を設計してください。
+font-sizeは最小でも0.95rem以上にしてください。
+header要素およびfooter要素は使用しないでください。
+React、外部フレームワーク、外部CSSライブラリは使用しないでください。
+SVGを使用する場合は、HTML内にインラインSVGとして記述してください。
+重要な関係性・流れ・階層・比較・分類がある場合は、カード、表、フロー図、タイムライン、マトリクス、SVG図形などから最適な表現を選択してください。
+
+# 依頼事項
+以下の「原文」を、分かりやすく視認性の高いHTML/CSS図解として作成してください。
+
+まず原文の内容を読み取り、情報の階層・関係性・重要度を整理してください。
+次に、図解に最適な構成を設計してください。
+そのうえで、HTML/CSSコードを1つの完成形として出力してください。
+SVGは使用可能です。
+Reactは使用しないでください。
+必要な場合に限り、最小限のJavaScriptを使用しても構いません。
+出力はHTML/CSSで完結させてください。
+「原文」が不足している場合、または図解形式の前提が決まらず複数解釈が成立する場合は、作成に進まず、不明点を番号付きで最大5問まで質問してください。
+
+# 原文
+`
+    },
+    {
+        id: "1-2",
+        title: "HTML/CSS図解作成【スマホ版】",
+        category: "HTML図解（Gemini）",
+        tags: ["HTML", "スマホ", "図解", "高頻度"],
+        importance: "最重要",
+        purpose: "原文をスマホ閲覧に最適化したHTML/CSS図解へ変換する",
+        caution: "JavaScriptなし。Reactなし。外部ライブラリなし。header要素・footer要素なし。",
+        prompt:
+`# 役割
+あなたは、情報設計・HTML/CSS・SVG図解に精通した最高水準のフロントエンドエンジニアです。
+
+# 目的
+私が提示する「原文」を、スマホ閲覧に最適化された、直感的で分かりやすいHTML/CSS図解として作成してください。
+評価軸は以下です。
+・正確性
+・網羅性
+・視認性
+・要素間の関係性の分かりやすさ
+・スマホでの読みやすさ
+・HTML/CSSのみで完結していること
+
+# 前提・背景
+・長文の出力を許容します。
+・正確性を重視してください。
+・網羅性を重視してください。
+・「原文」を図解化するにあたり、必要な検討・構成整理・再検証を行ってください。
+・外部調査が必要な場合は、利用可能な範囲で調査し、調査できない場合はその旨を明示してください。
+・Reactは使用しません。
+・JavaScriptは使用しません。
+・SVGは使用可能です。
+・HTML/CSSのみで実装可能な範囲で、視認性・操作性・保守性を高める工夫を行ってください。
+
+# 品質基準
+・品質を最優先してください。
+・作業時間の制約は考慮しないでください。
+・HTML/CSSのみで完結させてください。
+・Reactを使用しないでください。
+・JavaScriptを使用しないでください。
+・header要素およびfooter要素を使用しないでください。
+・iPhoneおよびAndroidの一般的なスマートフォンでの閲覧を基準に、レスポンシブレイアウトにしてください。
+・ライトモード／ダークモードの両方に対応し、OS設定に追従する設計にしてください。
+・図解として視認性が高くなるよう、レイアウト・配色・余白・タイポグラフィ・注釈を設計してください。
+・「原文」に含まれる要素間の関係性が一目で理解できる構造にしてください。
+・SVG、CSS Grid、Flexbox、CSSカスタムプロパティ、メディアクエリ、prefers-color-schemeは使用可能です。
+・アクセシビリティを考慮し、十分な文字サイズ、コントラスト、読み上げに配慮したHTML構造にしてください。
+・装飾よりも、情報理解のしやすさを優先してください。
+
+# 依頼事項
+以下の「原文」を、直感的で分かりやすいHTML/CSS図解として作成してください。
+実行手順は以下です。
+
+原文の内容を分解し、主要要素・補足要素・要素間の関係性を整理してください。
+図解に適した構成を設計してください。
+スマホ閲覧に最適化したHTML/CSSとして出力してください。
+SVGを使用した方が関係性や構造を明確に示せる場合は、SVGを使用してください。
+HTML/CSSのみで実現可能な範囲で、視認性を高める工夫を加えてください。
+原文が不足している場合、または図解形式の前提が決まらず複数解釈が成立する場合は、推測で補完せず、不明点を番号付きで最大5問まで質問してください。
+不明点がない場合は、質問せずにHTML/CSSを作成してください。
+
+# 出力形式
+・完成したHTMLを1つのコードブロックで出力してください。
+・HTMLファイル単体で動作する形式にしてください。
+・CSSはstyle要素内に記述してください。
+・React、JavaScript、外部ライブラリ、外部CSS、外部フォントは使用しないでください。
+・header要素およびfooter要素は使用しないでください。
+
+# 原文
+`
+    },
+    // ----------------------------------------
+    // HTML図解（VS Code）: 既存ファイルをVS Codeで調整する場合
+    // ----------------------------------------
+    {
+        id: "0-3",
+        title: "HTMLファイル限定【作業開始】",
+        category: "HTML図解（VS Code）",
+        tags: ["HTML", "VS code"],
+        importance: "最重要",
+        purpose: "対象HTMLファイルを限定し、バージョン管理付きで作業を開始する",
+        caution: "対象外ファイルは変更しない。本番処理は確認後のみ。",
+        prompt:
+`「」HTMLファイルだけを対象にしてください。
+それ以外のファイルの修正と変更はしないでください。
+バージョン管理をして、バージョンアップした場合のみ修正・変更の対象に加えます。
+まだファイル変更・出力作成・削除・本番処理はしないでください。
+実行前に、実行する内容とコマンドの意味を説明し、私の確認を取ってください。`
+    },
+    {
+        id: "1-3",
+        title: "レイアウト改善提案【実行前確認あり】",
+        category: "HTML図解（VS Code）",
+        tags: ["HTML", "図解", "高頻度"],
+        importance: "最重要",
+        purpose: "現在のページを確認し、改善提案を説明してから確認を取って実行する",
+        caution: "説明・確認が完了するまでコードの編集・ファイル作成・コマンド実行は行わない。",
+        prompt:
+`# 役割
+あなたは、HTML/CSS・レイアウト設計に精通したフロントエンドエンジニアです。
+
+# 依頼事項
+現在のHTMLページ・レイアウト・コードを確認し、以下の観点から改善点を洗い出して提案してください。
+
+# 確認観点
+・使いやすさ（操作性・インタラクション・ユーザー導線）
+・見やすさ（視認性・配色・余白・フォントサイズ・情報の階層）
+・編集しやすさ（コード構造・データ部分の分離・コメントの明確さ）
+
+# 実行ルール
+1. まず、これから実施する改善内容と各変更の意図を番号付きで説明してください。
+2. 説明のみを行い、コードの編集・ファイルの作成・コマンドの実行はまだ行わないでください。
+3. 私の確認・承認が取れてから、実際の作業を開始してください。
+`
+    },
+    {
+        id: "0-7",
+        title: "作業まとめ【簡潔版】",
+        category: "Excel",
+        tags: ["Excel", "VS code"],
+        importance: "最重要",
+        purpose: "セッション終了時に作業内容と次回再開手順を簡潔にまとめる",
+        caution: "メモリ保存不要。再開手順のみ出力。",
+        prompt:
+`今日はここまでです。メモリには保存不要です。今回の作業内容と次回再開手順だけを簡潔にまとめてください。`
+    },
+    {
+        id: "1-4",
+        title: "バージョン管理ルール",
+        category: "HTML図解（VS Code）",
+        tags: ["HTML", "高頻度", "VS code"],
+        importance: "最重要",
+        purpose: "ファイル更新時の上書き禁止・revインクリメントルールを指示する",
+        caution: "必ず新規ファイルを作成する。元ファイルの上書き・削除は禁止。",
+        prompt:
+`ファイル更新のルール
+以下のバージョン管理ルールを必ず守ってください。
+
+1. 更新後はファイル名を変更してください（元ファイルの上書き禁止）。
+2. ファイル名末尾の _rev番号 を1つ上げた新規ファイルを作成してください。
+   例: sample_rev2.html → sample_rev3.html
+3. _rev が付いていないファイルを初めて更新する場合は _rev2 を付けてください。
+4. 古いバージョンのファイルはすべて削除せず残してください。
+`
+    },
+    // ----------------------------------------
+    // 返信文
+    // ----------------------------------------
+    {
+        id: "2-1",
+        title: "税務顧問先への返信文作成",
+        category: "返信文",
+        tags: ["顧問先", "メール", "返信", "税務", "高頻度"],
+        importance: "最重要",
+        purpose: "顧問先から届いたメッセージへの自然な返信文を作成する",
+        caution: "返信文のみを出力する。見出し・補足・候補文は出さない。",
+        prompt:
+`# 役割
+あなたは、税務顧問先とのビジネスコミュニケーションに適した返信文を作成する文章作成の専門家です。
+
+# 目的
+税務顧問先から届いたメッセージに対して、相手の文体・温度感・言葉遣いに合わせた、自然で丁寧な返信文を作成してください。
+
+# 前提・背景
+返信対象となるメッセージは、「# メールのやりとり」に記載されています。
+「# メールのやりとり」には、これまでのメールの流れや相手の最新メッセージが含まれます。
+返信文は、税務顧問先との関係性を踏まえたビジネス上適切な文章にしてください。
+原則として、相手の表現の丁寧さ、温度感、文量に近いトーンで返信してください。
+
+# 品質基準
+ビジネス上自然な敬語を使用すること。
+過度に形式的、機械的、堅苦しい文章にしないこと。
+簡潔で読みやすい文章にすること。
+相手の質問・依頼・報告に対して、抜け漏れなく反応すること。
+不明点がある場合は、返信文の中で自然に確認すること。
+返信文以外の説明、見出し、補足、候補文は出力しないこと。
+
+# 依頼事項
+「# メールのやりとり」を確認し、クライアントからの最新メッセージに対する返信文を作成してください。
+相手の文体・温度感・言葉遣いに合わせてください。
+税務顧問先への返信として、自然で丁寧な文章にしてください。
+出力は返信文のみとしてください。
+
+# メールのやりとり
+`
+    },
+    {
+        id: "2-2",
+        title: "親しい相手への自然な返信文作成",
+        category: "返信文",
+        tags: ["返信", "親しい相手", "メッセージ", "高頻度"],
+        importance: "最重要",
+        purpose: "親しい女性への自然で温かい返信文を作成する",
+        caution: "添付メッセージにない事実を推測で断定しない。",
+        prompt:
+`# 役割
+あなたは、親しい相手との自然なコミュニケーションに適した返信文を作成する文章アシスタントです。
+
+# 目的
+添付された相手のメッセージに対して、親しみと優しさが伝わる自然な返信文を作成してください。
+
+# 前提・背景
+・私は、あなたが以前教えてくれた内容をもとに相手へメッセージを送りました。
+・相手は、私にとって親しい女性です。
+・返信文は、関係性を損なわず、温かく自然に伝わる内容にしてください。
+・添付メッセージに書かれていない事実は、推測で断定しないでください。
+
+# 品質基準
+・品質を最優先してください。
+・親しみ、優しさ、安心感が伝わる表現にしてください。
+・相手のメッセージ内容から読み取れる感情や意図を踏まえてください。
+・そのまま送っても違和感のない、自然な日本語にしてください。
+・必要な検討と再確認を行い、返信意図と表現にズレがない状態で回答してください。
+
+# 依頼事項
+・添付された相手のメッセージを読んだうえで、返信文を作成してください。
+・返信文は3案提示してください。
+・各案について、トーンや使いどころを1文で説明してください。
+・最後に、最もおすすめの返信文を1つ選び、その理由を簡潔に説明してください。
+`
+    },
+    // ----------------------------------------
+    // 情報整理・要約
+    // ----------------------------------------
+    {
+        id: "3-1",
+        title: "ここまでの情報を詳細整理",
+        category: "情報整理・要約",
+        tags: ["詳細整理", "要約", "構造化", "高頻度"],
+        importance: "最重要",
+        purpose: "ここまでの情報を抜け漏れなく詳しく整理する",
+        caution: "会話内にない情報を推測で補完しない。",
+        prompt:
+`# 役割
+あなたは、提示された情報を正確に読み取り、分かりやすく整理して要約・構造化するアシスタントです。
+
+# 目的
+ここまでに提示された情報を、読み手が全体像・重要点・関係性を理解しやすい形でまとめることです。
+
+# 前提・背景
+対象は、この依頼より前に提示されたすべての情報です。
+原文の意味・意図・ニュアンスを勝手に変更しないでください。
+会話内に存在しない情報を、推測で補完しないでください。
+不明点・根拠不足・矛盾がある内容は、事実として断定せず、その旨を明示してください。
+外部調査が必要な内容については、調査した情報と会話内情報を区別して整理してください。
+
+# 品質基準
+正確性を最優先してください。
+情報の抜け・誤解・過度な要約を避けてください。
+長文になっても構いません。
+品質を最優先し、必要な確認・検討・再検証を行ってから回答してください。
+事実、推測、未確認事項を明確に区別してください。
+読み手が後から参照しやすいように、見出し・箇条書き・表を必要に応じて使用してください。
+
+# 依頼事項
+ここまでに提示された情報を、分かりやすく整理してください。
+重要な論点・結論・背景・補足情報を分類してまとめてください。
+情報同士の関係性や流れが分かるように構造化してください。
+抜け・矛盾・曖昧な点がある場合は、別項目として明示してください。
+最後に、全体の要点を簡潔にまとめてください。
+`
+    },
+    {
+        id: "3-2",
+        title: "ここまでの情報を対象範囲付きで詳細整理",
+        category: "情報整理・要約",
+        tags: ["詳細整理", "要約", "対象範囲", "構造化", "高頻度"],
+        importance: "最重要",
+        purpose: "話題変更がある会話で、対象範囲を明示して詳しく整理する",
+        caution: "話題変更が明確でない場合は、推測で限定しない。",
+        prompt:
+`# 役割
+あなたは、提示された情報を正確に読み取り、分かりやすく整理して要約・構造化するアシスタントです。
+
+# 目的
+この依頼より前に提示された情報を、読み手が全体像・重要点・情報同士の関係性を理解しやすい形で整理することです。
+
+# 前提・背景
+対象範囲は、この依頼より前に提示されたすべての情報とします。
+ただし、会話の途中で話題または主題が明確に変更されている場合は、その変更以降の情報のみを対象とします。
+話題または主題の変更が明確でない場合は、対象範囲を推測で限定せず、判断が必要な箇所として明示してください。
+原文の意味・意図・ニュアンスを変更しないでください。
+会話内に存在しない情報を推測で補完しないでください。
+不明点、根拠不足、矛盾がある内容は、事実として断定せず、その旨を明示してください。
+外部調査が必要な内容を扱う場合は、会話内情報と外部調査情報を明確に区別してください。
+外部調査を実行できない場合は、調査が必要な項目として明示してください。
+
+# 品質基準
+正確性を最優先してください。
+情報の抜け、誤解、過度な要約を避けてください。
+事実、推測、未確認事項を明確に区別してください。
+重要な情報は、省略せずに保持してください。
+読み手が後から参照しやすいように、見出し、箇条書き、表を必要に応じて使用してください。
+長文になっても、重要な情報を省略しないでください。
+回答前に、対象範囲、情報の整合性、分類の妥当性を確認してください。
+
+# 依頼事項
+以下の構成で回答してください。
+
+## 対象範囲
+今回整理対象とした情報の範囲を明示してください。
+話題または主題の変更がある場合は、どの時点以降を対象にしたかを明示してください。
+## 全体像
+ここまでに提示された情報の概要を、読み手が全体を把握できる形で整理してください。
+## 重要な論点
+主要な論点を分類して整理してください。
+各論点について、関連する情報や背景を簡潔に補足してください。
+## 結論・決定事項
+明確に示されている結論、合意事項、決定事項を整理してください。
+結論ではなく推測に留まる内容は、結論として扱わないでください。
+## 背景・補足情報
+判断や理解に影響する背景情報を整理してください。
+## 不明点・未確認事項
+不明点、根拠不足、追加確認が必要な事項を整理してください。
+## 矛盾・注意点
+情報同士の矛盾、曖昧な点、解釈に注意が必要な点を整理してください。
+## 全体の要点
+最後に、全体の要点を簡潔にまとめてください。
+`
+    },
+    {
+        id: "3-3",
+        title: "ここまでの情報を簡潔整理",
+        category: "情報整理・要約",
+        tags: ["簡潔整理", "要約", "高頻度"],
+        importance: "最重要",
+        purpose: "短時間で全体像を把握できるように簡潔に整理する",
+        caution: "簡潔でも重要情報は落とさない。",
+        prompt:
+`# 役割
+あなたは、提供された情報を正確かつ分かりやすく整理する編集者です。
+
+# 目的
+ここまでに提示された情報を、読み手が短時間で全体像を理解できるように、正確性と分かりやすさを重視して簡潔にまとめること。
+
+# 前提・背景
+対象は、これまでの会話または提示済みの情報です。
+情報の意味や意図を変えずに整理してください。
+提示情報に含まれていない内容は、推測で補完しないでください。
+不明点や確認が必要な点がある場合は、その旨を明示してください。
+
+# 品質基準
+正確性を最優先してください。
+分かりやすさを重視し、冗長な表現を避けて簡潔にまとめてください。
+重要な情報の抜け漏れがないようにしてください。
+必要に応じて情報を分類し、見出しや箇条書きを使って読みやすく整理してください。
+品質を最優先し、必要な確認・検討・再検証を十分に行ってから回答してください。
+
+# 依頼事項
+ここまでの情報を要点ごとに整理してください。
+重要な結論・背景・補足情報を分けてまとめてください。
+読み手が全体像を把握しやすい形式で、簡潔に出力してください。
+`
+    },
+    {
+        id: "3-4",
+        title: "ここまでの情報を対象範囲付きで簡潔整理",
+        category: "情報整理・要約",
+        tags: ["簡潔整理", "要約", "対象範囲", "高頻度"],
+        importance: "最重要",
+        purpose: "話題変更がある会話で、対象範囲を確認しつつ簡潔に整理する",
+        caution: "該当情報なしの見出しは「該当情報なし」と記載する。",
+        prompt:
+`# 役割
+あなたは、提供された情報を正確かつ分かりやすく整理する編集者です。
+
+# 目的
+これまでに提示された情報を、読み手が短時間で全体像を理解できるように、正確性と分かりやすさを重視して簡潔に要約すること。
+
+# 前提・背景
+対象は、これまでの会話または提示済みの情報です。
+会話の途中で話題または主題が明確に変更されている場合は、その変更以降の情報のみを対象にしてください。
+話題または主題の変更が明確でない場合は、対象範囲を推測で限定せず、「対象範囲の判断が必要な箇所」として明示してください。
+情報の意味や意図を変えずに整理してください。
+提示情報に含まれていない内容は、推測で補完しないでください。
+不明点や確認が必要な点がある場合は、その旨を明示してください。
+
+# 品質基準
+正確性を最優先してください。
+重要な情報の抜け漏れがないようにしてください。
+冗長な表現を避け、簡潔にまとめてください。
+情報は、結論・背景・補足情報・不明点に分類してください。
+見出しや箇条書きを使い、読み手が短時間で理解できる形式にしてください。
+回答前に、要約対象・重要情報・不明点の有無を確認してください。
+
+# 依頼事項
+これまでの情報を要点ごとに整理してください。
+「結論」「背景」「補足情報」「不明点・確認事項」の見出しに分けてまとめてください。
+該当する情報がない見出しには「該当情報なし」と記載してください。
+対象範囲が不明確な場合は、「対象範囲の判断が必要な箇所」として明示してください。
+読み手が全体像を把握しやすいよう、簡潔に出力してください。
+`
+    },
+    // ----------------------------------------
+    // 汎用整理
+    // ----------------------------------------
+    {
+        id: "4-1",
+        title: "万能整理",
+        category: "汎用整理",
+        tags: ["整理", "構造化", "高頻度"],
+        importance: "高",
+        purpose: "迷ったときに使う基本プロンプト",
+        caution: "最も汎用的に使う。",
+        prompt:
+`以下の内容について、結論を先に述べてください。そのうえで、事実・推測・意見を分け、根拠、主要論点、抜け漏れ、リスク、赤ライン、次に取るべき行動を整理してください。正確性と実務での使いやすさを最優先してください。
+
+`
+    },
+    {
+        id: "4-2",
+        title: "実務化",
+        category: "汎用整理",
+        tags: ["実務化", "手順", "チェックリスト", "高頻度"],
+        importance: "高",
+        purpose: "抽象的な話を実行可能な形に落とす",
+        caution: "仕事・家庭・医療相談など幅広く使用。",
+        prompt:
+`以下の内容を、実務で使えるレベルまで具体化してください。手順、チェックリスト、判断基準、必要資料、注意点、やってはいけないことを整理してください。現実的に実行できる案を優先してください。
+
+`
+    },
+    // ----------------------------------------
+    // 検証・ファクトチェック
+    // ----------------------------------------
+    {
+        id: "4-3",
+        title: "厳しめ検証",
+        category: "検証・ファクトチェック",
+        tags: ["検証", "反論", "リスク", "高頻度"],
+        importance: "高",
+        purpose: "自分の考えや文章の弱点確認",
+        caution: "意思決定前に使う。",
+        prompt:
+`以下の考えまたは文章について、遠慮なく厳しめに検証してください。論理の弱い部分、都合のよい前提、根拠不足、見落としているリスク、反対意見、誤解されやすい表現を指摘してください。そのうえで、より安全で実務的な修正案を示してください。
+
+`
+    },
+    {
+        id: "4-4",
+        title: "選択肢比較",
+        category: "汎用整理",
+        tags: ["比較", "意思決定", "高頻度"],
+        importance: "高",
+        purpose: "複数案の比較・意思決定",
+        caution: "仕事・医療・家庭・旅行など汎用。",
+        prompt:
+`以下の選択肢を比較してください。判断基準を先に整理したうえで、各案のメリット、デメリット、リスク、費用対効果、短期的影響、長期的影響を比較してください。最後に、現時点での推奨順位と、その理由を示してください。
+
+`
+    },
+    {
+        id: "4-5",
+        title: "赤ライン確認",
+        category: "検証・ファクトチェック",
+        tags: ["赤ライン", "リスク", "高頻度"],
+        importance: "高",
+        purpose: "やってはいけないことの確認",
+        caution: "医療・税務・契約・個人情報で重要。",
+        prompt:
+`以下の内容について、絶対にやってはいけない赤ラインを明示してください。法務、税務、医療、安全、個人情報、信用毀損、実務上のトラブルの観点から、避けるべき行動とその理由を整理してください。
+
+`
+    },
+    // ----------------------------------------
+    // 税務・会計
+    // ----------------------------------------
+    {
+        id: "5-1",
+        title: "税務論点整理",
+        category: "税務・会計",
+        tags: ["税務", "会計", "論点整理", "高頻度"],
+        importance: "高",
+        purpose: "税務相談全般",
+        caution: "条文・通達・国税庁情報の確認前提。",
+        prompt:
+`以下の事案について、税務上の論点を整理してください。結論、根拠条文、通達、国税庁情報、実務上の留意点、税務調査で問題になり得る点、反対解釈の余地、追加で確認すべき事実に分けてください。根拠が確認できない部分は推測として明示してください。
+
+`
+    },
+    {
+        id: "5-2",
+        title: "会計・税務処理確認",
+        category: "税務・会計",
+        tags: ["会計処理", "税務処理", "消費税"],
+        importance: "高",
+        purpose: "取引処理の確認",
+        caution: "勘定科目・消費税・証憑を確認。",
+        prompt:
+`以下の取引について、会計処理と税務処理を整理してください。勘定科目、仕訳例、法人税または所得税の取扱い、消費税区分、必要な証憑、処理時の注意点、税務調査で確認されやすい点を示してください。
+
+`
+    },
+    {
+        id: "5-3",
+        title: "顧問先説明用の税務整理",
+        category: "税務・会計",
+        tags: ["税務", "顧問先", "説明文"],
+        importance: "高",
+        purpose: "専門内容を顧問先向けに説明",
+        caution: "専門用語を減らす。",
+        prompt:
+`以下の税務論点を、顧問先に説明するための文章にしてください。専門用語はできるだけ減らし、結論、理由、注意点、顧問先に対応してもらうことを分かりやすく整理してください。断定しすぎず、必要に応じて「個別事情により異なる」旨も自然に入れてください。
+
+`
+    },
+    // ----------------------------------------
+    // 顧問先メール
+    // ----------------------------------------
+    {
+        id: "6-1",
+        title: "顧問先向けメール作成",
+        category: "顧問先メール",
+        tags: ["顧問先", "メール", "高頻度"],
+        importance: "高",
+        purpose: "基本のビジネスメール",
+        caution: "簡潔・丁寧・明確。",
+        prompt:
+`以下の内容を、顧問先向けのビジネスメールに整えてください。結論を先に書き、必要な対応、期限、理由、注意点を分かりやすく示してください。丁寧で失礼のない表現にしつつ、依頼事項が曖昧にならないようにしてください。
+
+`
+    },
+    {
+        id: "6-2",
+        title: "資料依頼メール",
+        category: "顧問先メール",
+        tags: ["顧問先", "資料依頼", "メール"],
+        importance: "高",
+        purpose: "資料回収",
+        caution: "必要資料・期限・提出方法を明確化。",
+        prompt:
+`以下の内容を、顧問先への資料依頼メールにしてください。必要資料、提出期限、提出方法、注意点、不明点がある場合の連絡方法を箇条書きで分かりやすく整理してください。相手が次に何をすればよいか迷わない文章にしてください。
+
+`
+    },
+    {
+        id: "6-3",
+        title: "催促メール",
+        category: "顧問先メール",
+        tags: ["顧問先", "催促", "メール"],
+        importance: "高",
+        purpose: "未提出・未回答への催促",
+        caution: "柔らかいが曖昧にしない。",
+        prompt:
+`以下の内容を、失礼のない催促メールにしてください。相手を責める表現は避けつつ、未対応事項、期限、対応が遅れた場合の影響、お願いしたい行動を明確に示してください。柔らかめ、標準、やや強めの3案を作成してください。
+
+`
+    },
+    // ----------------------------------------
+    // 医療・健康
+    // ----------------------------------------
+    {
+        id: "7-1",
+        title: "医療情報整理",
+        category: "医療・健康",
+        tags: ["医療", "健康", "整理", "高頻度"],
+        importance: "高",
+        purpose: "診察・治療方針の整理",
+        caution: "診断断定を避ける。",
+        prompt:
+`以下の医療情報を、患者側の意思決定に使える形で整理してください。事実、医学的に一般化できること、不確実なこと、主治医に確認すべきこと、治療選択に影響しそうな点に分けてください。診断や治療方針を断定せず、確認事項を明確にしてください。
+
+`
+    },
+    {
+        id: "7-2",
+        title: "主治医への質問リスト",
+        category: "医療・健康",
+        tags: ["医療", "主治医", "質問リスト"],
+        importance: "高",
+        purpose: "診察前の準備",
+        caution: "質問の意図も入れる。",
+        prompt:
+`以下の状況について、主治医に確認すべき質問リストを作ってください。優先順位を付け、各質問について、なぜ確認する必要があるのか、回答によって判断がどう変わるのかも示してください。診察時間内で聞きやすい順番に整理してください。
+
+`
+    },
+    {
+        id: "7-3",
+        title: "治療選択肢比較",
+        category: "医療・健康",
+        tags: ["医療", "治療", "比較"],
+        importance: "高",
+        purpose: "治療方針の比較",
+        caution: "効果・負担・不確実性を分ける。",
+        prompt:
+`以下の治療選択肢を比較してください。期待できる効果、身体への負担、副作用や合併症、生活への影響、不確実性、確認すべき医学的条件、主治医に聞くべき質問を整理してください。患者本人の価値観に照らした判断材料も示してください。
+
+`
+    },
+    // ----------------------------------------
+    // 子育て・教育
+    // ----------------------------------------
+    {
+        id: "8-1",
+        title: "子育て相談整理",
+        category: "子育て・教育",
+        tags: ["子育て", "教育", "整理"],
+        importance: "高",
+        purpose: "子育ての悩み整理",
+        caution: "短期・中長期に分ける。",
+        prompt:
+`以下の子育ての悩みについて、現実的な対応策を整理してください。子どもの年齢や発達段階を踏まえ、短期対応、中長期対応、親が避けるべき対応、子どもの安心感を高める関わり方に分けてください。
+
+`
+    },
+    {
+        id: "8-2",
+        title: "子どもへの説明文",
+        category: "子育て・教育",
+        tags: ["子育て", "説明文", "子ども"],
+        importance: "高",
+        purpose: "子どもに説明する文章作成",
+        caution: "怖がらせず、曖昧にしない。",
+        prompt:
+`以下の内容を、小学生の子どもにも伝わるように説明する文章にしてください。怖がらせすぎず、でも大事なことは曖昧にしないでください。子どもが安心できる言葉、質問しやすい雰囲気、親として伝えるべきメッセージを入れてください。
+
+`
+    },
+    // ----------------------------------------
+    // 家族・人生
+    // ----------------------------------------
+    {
+        id: "9-1",
+        title: "家族問題の整理",
+        category: "家族・人生",
+        tags: ["家族", "整理", "意思決定"],
+        importance: "高",
+        purpose: "家族内の悩み整理",
+        caution: "感情論に寄りすぎない。",
+        prompt:
+`以下の家族に関する悩みについて、感情論に寄りすぎず、現実的な選択肢、リスク、落としどころ、短期対応、中長期対応を整理してください。自分がコントロールできることと、コントロールできないことを分けてください。
+
+`
+    },
+    {
+        id: "9-2",
+        title: "後悔最小化",
+        category: "家族・人生",
+        tags: ["人生", "意思決定", "後悔最小化"],
+        importance: "高",
+        purpose: "人生の意思決定",
+        caution: "短期満足と長期満足を分ける。",
+        prompt:
+`以下のテーマについて、後悔最小化の観点から整理してください。短期的な満足、長期的な満足、家族への影響、健康への影響、自由度、自分の価値観との整合性を検討し、将来後悔しやすいポイントを示してください。
+
+`
+    },
+    // ----------------------------------------
+    // 回答形式指定
+    // ----------------------------------------
+    {
+        id: "10-1",
+        title: "結論先出し",
+        category: "回答形式指定",
+        tags: ["結論", "回答形式"],
+        importance: "高",
+        purpose: "回答スタイル指定",
+        caution: "ほぼ全相談で有効。",
+        prompt:
+`結論を先に短く述べてください。その後、根拠、具体策、注意点、次にやることの順に整理してください。
+
+`
+    },
+    {
+        id: "10-2",
+        title: "事実・推測・意見の区分",
+        category: "回答形式指定",
+        tags: ["事実", "推測", "意見"],
+        importance: "高",
+        purpose: "不確実性の整理",
+        caution: "医療・税務・意思決定で有効。",
+        prompt:
+`回答では、事実、推測、意見を明確に分けてください。断定できないことは断定せず、確認が必要な点を明示してください。
+
+`
+    },
+    {
+        id: "10-3",
+        title: "根拠重視",
+        category: "回答形式指定",
+        tags: ["根拠", "正確性"],
+        importance: "高",
+        purpose: "正確性重視",
+        caution: "確認不能な場合は明示。",
+        prompt:
+`根拠を重視して回答してください。根拠があること、根拠が弱いこと、確認できないことを分けてください。可能であれば一次情報、公的情報、専門機関の情報を優先してください。
+
+`
+    },
+    {
+        id: "10-4",
+        title: "網羅性重視",
+        category: "回答形式指定",
+        tags: ["網羅性", "長文歓迎"],
+        importance: "高",
+        purpose: "抜け漏れ防止",
+        caution: "長文歓迎時に使う。",
+        prompt:
+`網羅性を重視してください。主要論点だけでなく、見落としやすい例外、リスク、代替案、反対意見、追加確認事項も含めてください。長文になっても構いません。
+
+`
+    },
+    {
+        id: "10-5",
+        title: "チェックリスト化",
+        category: "回答形式指定",
+        tags: ["チェックリスト", "実務"],
+        importance: "高",
+        purpose: "実務・確認作業",
+        caution: "作業漏れ防止。",
+        prompt:
+`以下の内容をチェックリスト化してください。確認項目、必要資料、判断基準、注意点、完了条件に分けて、実務でそのまま使える形にしてください。
+
+`
+    },
+    // ----------------------------------------
+    // 汎用整理（共通）
+    // ----------------------------------------
+    {
+        id: "0-1",
+        title: "ファイル構成確認【編集前】",
+        category: "汎用整理",
+        tags: ["HTML", "Excel", "VS code"],
+        importance: "最重要",
+        purpose: "作業開始前にファイル構成を把握する",
+        caution: "確認のみ。編集は行わない。",
+        prompt:
+`ファイル構成を確認してください。
+まだ修正や実行はしないでください。
+実行前に、実行する内容とコマンドの意味を説明し、私の確認を取ってください。`
+    },
+    {
+        id: "0-10",
+        title: "確認結果・処理方針を先に説明",
+        category: "汎用整理",
+        tags: ["HTML", "Excel", "VS code"],
+        importance: "最重要",
+        purpose: "作業開始前に確認結果と処理方針だけを先に説明させる",
+        caution: "説明・確認が完了するまでファイル変更・実行はしない。",
+        prompt:
+`まず確認結果と処理方針だけ説明してください。`
+    },
+    // ----------------------------------------
+    // Excel
+    // ----------------------------------------
+    {
+        id: "0-4",
+        title: "Excelファイル限定【作業開始】",
+        category: "Excel",
+        tags: ["Excel", "VS code"],
+        importance: "最重要",
+        purpose: "inputフォルダ内のExcelファイルのみを対象に確認する",
+        caution: "本番処理はまだ行わない。",
+        prompt:
+`input フォルダ内のExcelだけを対象にしてください。
+まだファイル変更・出力作成・削除・本番処理はしないでください。`
+    },
+    {
+        id: "0-5",
+        title: "README確認【本番実行前確認】",
+        category: "Excel",
+        tags: ["Excel", "VS code"],
+        importance: "最重要",
+        purpose: "READMEを確認し、本番実行前に確認を取る",
+        caution: "実行コマンド・対象・出力先を提示してから確認を取る。",
+        prompt:
+`READMEを読んで、実行手順・入力ファイル・設定ファイル・注意事項を確認してください。
+本番実行が必要な場合は、実行コマンド・対象ファイル・出力先を提示して、私の確認を取ってから実行してください。`
+    },
+    {
+        id: "0-6",
+        title: "README・スクリプト更新",
+        category: "Excel",
+        tags: ["Excel", "VS code"],
+        importance: "最重要",
+        purpose: "作業内容をREADMEとPythonスクリプトに反映して保存する",
+        caution: "既存ファイルへの上書き可。",
+        prompt:
+`今回の内容を次回も使用できるように、READMEとPythonスクリプトの更新、書き換えを行ってください。
+既存のREADMEとPythonスクリプトに上書きして問題ないです。`
+    },
+    {
+        id: "0-8",
+        title: "作業まとめ＋メモリ保存確認",
+        category: "Excel",
+        tags: ["Excel", "VS code"],
+        importance: "最重要",
+        purpose: "セッション終了時に作業内容を整理し、メモリ保存候補を確認する",
+        caution: "保存前に候補を提示してから保存する。",
+        prompt:
+`今日はここまでです。今回の作業内容、変更したファイル、未完了事項、次回やることを簡潔にまとめてください。メモリに保存する前に、保存候補を確認させてください。`
+    },
+    {
+        id: "0-11",
+        title: "outputフォルダへの出力指示",
+        category: "Excel",
+        tags: ["Excel", "VS code"],
+        importance: "最重要",
+        purpose: "出力ファイルをoutputフォルダに作成するよう指示する",
+        caution: "outputフォルダが存在するか事前に確認する。",
+        prompt:
+`出力が必要な場合は output フォルダに作成してください。`
+    },
+    {
+        id: "0-12",
+        title: "HTML編集作業の【/compact】",
+        category: "HTML図解（VS Code）",
+        tags: ["HTML", "VS code"],
+        importance: "最重要",
+        purpose: "HTML編集作業の現在状態をcompact用に要約・引き継ぎ準備する",
+        caution: "compact後もいきなりファイル変更せず、まず現在の理解を確認する。",
+        prompt:
+`/compact
+HTML編集作業の現在状態を、次回復元できるように要約してください。
+
+必ず以下を残してください。
+
+1. 作業目的
+2. 対象ファイル
+3. 変更済み箇所
+4. 未完了箇所
+5. 変更してはいけない箇所
+6. 影響するCSS・JavaScript
+7. 表示確認が必要な画面・条件
+8. 次にやるべき手順
+
+compact後も、いきなりファイル変更せず、まず現在の理解を確認してください。`
+    },
+    {
+        id: "0-13",
+        title: "Excel作業の【/compact】",
+        category: "Excel",
+        tags: ["Excel", "VS code"],
+        importance: "最重要",
+        purpose: "Excel作業の現在状態をcompact用に要約・引き継ぎ準備する",
+        caution: "compact後はまず理解確認のみ。ファイル変更はしない。",
+        prompt:
+`/compact
+Excel作業の現在状態を、次回復元できるように要約してください。
+
+必ず以下を残してください。
+
+1. 作業目的
+2. 比較元・修正対象・最新出力ファイル
+3. 完了した修正
+4. 未完了の修正
+5. 変更したシート・行・列・セル範囲
+6. 数式・書式・印刷設定・グループ化の注意点
+7. 触ってはいけないファイル
+8. 次にやるべき手順
+
+compact後は、まず現在の理解確認だけ行い、ファイル変更はしないでください。`
+    },
+    {
+        id: "0-14",
+        title: "Pythonスクリプト化作業の【/compact】",
+        category: "Excel",
+        tags: ["Excel", "VS code"],
+        importance: "最重要",
+        purpose: "Pythonスクリプト化作業の現在状態をcompact用に要約・引き継ぎ準備する",
+        caution: "compact後はまず理解確認のみ。ファイル変更はしない。",
+        prompt:
+`/compact
+Pythonスクリプト化作業の現在状態を、次回復元できるように要約してください。
+
+必ず以下を残してください。
+
+1. スクリプト化の目的
+2. 自動化する処理・自動化しない処理
+3. 変更済みのPython・設定・READMEファイル
+4. 追加済み・追加予定の関数や設定項目
+5. 壊してはいけない既存処理
+6. 実行コマンド
+7. 検証済み事項・未検証事項
+8. 次にやるべき手順
+
+compact後は、まず現在の理解確認だけ行い、ファイル変更はしないでください。`
+    },
+    {
+        id: "1-5",
+        title: "ワイドモニター対応【横幅拡大】",
+        category: "HTML図解（VS Code）",
+        tags: ["HTML", "レイアウト", "高頻度", "VS code"],
+        importance: "高",
+        purpose: "ワイドモニターでのスクロール数を減らすためにコンテナ幅を拡張する",
+        caution: "スマホ・タブレット向けの既存レイアウトは変更しない。CSSのみで対応。",
+        prompt:
+`# 目的
+パソコン・ワイドモニターでの閲覧時に、表示幅を広げてスクロール数を減らしてください。
+
+# 依頼事項
+・現在のコンテナの max-width を確認し、ワイドモニター向けに拡張してください。
+・カードグリッドが画面幅に応じて自動的に列数が増えるよう調整してください。
+・スマホ・タブレット向けの既存レイアウトは変更しないでください。
+・変更はCSSのみで対応してください。JavaScriptは使用しないでください。
+`
+    },
+    {
+        id: "1-7",
+        title: "ライトモード専用への切り替え【確認あり】",
+        category: "HTML図解（VS Code）",
+        tags: ["HTML", "VS code", "高頻度"],
+        importance: "高",
+        purpose: "ダークモードを削除しライトモード専用に変更する（実行前に説明・確認）",
+        caution: "説明・確認が完了するまでコードの編集・ファイル作成・コマンド実行は行わない。",
+        prompt:
+`現在はダークモードにも対応ですが、ライトモードのみに変更してください。
+まだ修正や実行はしないでください。実行前に、実行する内容とコマンドの意味を説明し、私の確認を取ってください。`
+    },
+    {
+        id: "1-8",
+        title: "スマホ向けスクロール・余白最適化",
+        category: "HTML図解（VS Code）",
+        tags: ["HTML", "VS code", "スマホ", "高頻度"],
+        importance: "高",
+        purpose: "スマホでの閲覧しやすさ向上のためスクロールと余白を最適化する",
+        caution: "画面表示のデザインはできるだけ維持する。",
+        prompt:
+`スマホで閲覧しやすいようにスクロールと余白の最適化をしてください。`
+    },
+    {
+        id: "0-9",
+        title: "印刷対応CSS追加",
+        category: "HTML図解（VS Code）",
+        tags: ["HTML", "高頻度", "VS code"],
+        importance: "高",
+        purpose: "@media print を追加して印刷時の表示を最適化する",
+        caution: "画面表示のデザインはできるだけ維持する。break-inside: avoid は原則不使用。",
+        prompt:
+`条件：
+・@media print を追加してください
+・break-inside: avoid は原則使わないでください
+・印刷時の余白は小さめにしてください
+・文字カラーも印刷時に読みやすい色に変更してください
+・画面表示のデザインはできるだけ変更しないでください`
+    },
+    {
+        id: "0-15",
+        title: "本番実行前確認＋output保存＋バージョン管理",
+        category: "Excel",
+        tags: ["Excel", "HTML"],
+        importance: "最重要",
+        purpose: "本番実行前の確認取得・outputフォルダ出力・バージョン管理を一括指示する",
+        caution: "outputフォルダの存在を事前確認すること。",
+        prompt:
+`本番実行が必要な場合は、実行コマンド・対象ファイル・出力先を提示して、私の確認を取ってから実行してください。
+出力が必要な場合は output フォルダに作成してください。
+出力はバージョン管理を行ってください。`
+    },
+];
+
+// ============================================================
+// ▼▼▼ フィルター定義（カテゴリ・タグを追加・変更する場合はここを編集）▼▼▼
+// ------------------------------------------------------------
+// 注意: promptData の category・tags の値と一致させること
+// "趣味・旅行" などプロンプトが0件のカテゴリは削除してください
+// ============================================================
+
+const categories = [
+    "すべて", "最重要", "HTML図解（Gemini）", "HTML図解（VS Code）", "Excel", "情報整理・要約",
+    "返信文", "汎用整理", "検証・ファクトチェック", "税務・会計",
+    "顧問先メール", "医療・健康", "子育て・教育",
+    "家族・人生", "回答形式指定"
+];
+
+const tagsList = [
+    "すべて", "VS code", "Excel", "要約", "HTML", "スマホ",
+    "顧問先", "返信", "詳細整理", "簡潔整理",
+    "税務", "医療", "高頻度"
+];
+
+// ============================================================
+// 以下は描画処理です。通常は編集不要です。
+// ============================================================
+
+let currentCategory = 'すべて';
+let currentTags = new Set(['すべて']);
+let currentSearch = '';
+let allExpanded = false;
+
+const gridEl = document.getElementById('prompt-grid');
+const categoryContainer = document.getElementById('category-filters');
+const tagContainer = document.getElementById('tag-filters');
+const searchInput = document.getElementById('search-input');
+const itemCountEl = document.getElementById('item-count');
+const totalCountEl = document.getElementById('total-count');
+
+document.getElementById('last-updated').textContent = "2026年6月14日";
+
+function init() {
+    totalCountEl.textContent = promptData.length;
+
+    categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = `filter-btn ${cat === 'すべて' ? 'active' : ''}`;
+        btn.textContent = cat;
+        btn.onclick = () => { currentCategory = cat; updateActiveButtons(); render(); };
+        categoryContainer.appendChild(btn);
+    });
+
+    tagsList.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = `filter-btn ${tag === 'すべて' ? 'active' : ''}`;
+        btn.textContent = tag;
+        btn.onclick = () => {
+            if (tag === 'すべて') {
+                currentTags = new Set(['すべて']);
+            } else {
+                currentTags.delete('すべて');
+                if (currentTags.has(tag)) {
+                    currentTags.delete(tag);
+                    if (currentTags.size === 0) currentTags.add('すべて');
+                } else {
+                    currentTags.add(tag);
+                }
+            }
+            updateActiveButtons();
+            render();
+        };
+        tagContainer.appendChild(btn);
+    });
+
+    searchInput.addEventListener('input', (e) => { currentSearch = e.target.value; render(); });
+    render();
+}
+
+function resetFilters() {
+    currentCategory = 'すべて';
+    currentTags = new Set(['すべて']);
+    currentSearch = '';
+    searchInput.value = '';
+    updateActiveButtons();
+    render();
+}
+
+function toggleExpandAll() {
+    allExpanded = !allExpanded;
+    document.querySelector('.expand-all-btn').textContent = allExpanded ? '全て折りたたむ' : '全て展開';
+    document.querySelectorAll('.prompt-wrapper').forEach(wrapper => {
+        const btn = wrapper.querySelector('.toggle-btn');
+        if (btn.style.display === 'block') {
+            wrapper.classList.toggle('expanded', allExpanded);
+            btn.textContent = allExpanded ? '折りたたむ' : '全文表示';
+        }
+    });
+}
+
+function updateActiveButtons() {
+    Array.from(categoryContainer.children).forEach(btn =>
+        btn.classList.toggle('active', btn.textContent === currentCategory));
+    Array.from(tagContainer.children).forEach(btn =>
+        btn.classList.toggle('active', currentTags.has(btn.textContent)));
+}
+
+function getFilteredData() {
+    return promptData.filter(item => {
+        let matchCategory = true;
+        if (currentCategory === '最重要') {
+            matchCategory = item.importance === '最重要';
+        } else if (currentCategory !== 'すべて') {
+            matchCategory = item.category === currentCategory;
+        }
+        const matchTag = currentTags.has('すべて') || item.tags.some(t => currentTags.has(t));
+        let matchSearch = true;
+        if (currentSearch) {
+            const q = currentSearch.toLowerCase();
+            matchSearch =
+                item.title.toLowerCase().includes(q) ||
+                item.category.toLowerCase().includes(q) ||
+                item.purpose.toLowerCase().includes(q) ||
+                item.prompt.toLowerCase().includes(q) ||
+                item.tags.some(t => t.toLowerCase().includes(q));
+        }
+        return matchCategory && matchTag && matchSearch;
+    });
+}
+
+function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function render() {
+    const data = getFilteredData();
+    gridEl.innerHTML = '';
+    itemCountEl.textContent = data.length;
+    allExpanded = false;
+    document.querySelector('.expand-all-btn').textContent = '全て展開';
+
+    data.forEach(item => {
+        const isMostImportant = item.importance === '最重要';
+        const isHighRisk = item.category === '税務・会計' || item.category === '医療・健康';
+        const cardClasses = ['card'];
+        if (isMostImportant) cardClasses.push('most-important');
+        if (isHighRisk) cardClasses.push('high-risk');
+
+        const tagsHtml = item.tags.map(tag => `<span class="meta-tag">${tag}</span>`).join('');
+
+        const cardHTML = `
+            <div class="${cardClasses.join(' ')}">
+                <div class="card-header">
+                    <h3 class="card-title">${item.title}</h3>
+                    <span class="badge importance-${item.importance}">${item.importance}</span>
+                </div>
+                <div class="card-meta">
+                    <span class="meta-category">${item.category}</span>
+                    ${tagsHtml}
+                </div>
+                <div class="card-field"><strong>用途:</strong> ${item.purpose}</div>
+                <div class="caution-text"><strong>注意点:</strong> ${item.caution}</div>
+                <div class="prompt-wrapper">
+                    <pre class="prompt-text">${escapeHtml(item.prompt)}</pre>
+                    <div class="prompt-fade"></div>
+                    <button class="toggle-btn">全文表示</button>
+                </div>
+                <div style="margin-top: auto; padding-top: 16px;">
+                    <button class="copy-btn" onclick="copyPrompt(this, '${item.id}')">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        コピー
+                    </button>
+                </div>
+            </div>
+        `;
+        gridEl.insertAdjacentHTML('beforeend', cardHTML);
+    });
+
+    setTimeout(() => {
+        document.querySelectorAll('.prompt-wrapper').forEach(wrapper => {
+            const pre = wrapper.querySelector('.prompt-text');
+            const btn = wrapper.querySelector('.toggle-btn');
+            if (pre.scrollHeight > 205) {
+                btn.style.display = 'block';
+                btn.onclick = () => {
+                    wrapper.classList.toggle('expanded');
+                    btn.textContent = wrapper.classList.contains('expanded') ? '折りたたむ' : '全文表示';
+                };
+            } else {
+                wrapper.classList.add('expanded');
+            }
+        });
+    }, 50);
+}
+
+async function copyPrompt(btnElement, id) {
+    const item = promptData.find(d => d.id === id);
+    if (!item) return;
+
+    try {
+        await navigator.clipboard.writeText(item.prompt);
+    } catch (e) {
+        const textarea = document.createElement('textarea');
+        textarea.value = item.prompt;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+    }
+
+    showToast();
+    const originalHTML = btnElement.innerHTML;
+    btnElement.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>コピー完了`;
+    btnElement.classList.add('copied');
+    setTimeout(() => {
+        btnElement.innerHTML = originalHTML;
+        btnElement.classList.remove('copied');
+    }, 2000);
+}
+
+function showToast() {
+    const toast = document.getElementById('toast-message');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+init();
+</script>
+</body>
+</html>
